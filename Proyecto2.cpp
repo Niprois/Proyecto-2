@@ -12,48 +12,100 @@ struct Guardian{   //Definición de guardian y sus caracteristicas, como nombre,
     char City[20];
     string Apprentice[20];
 };
-
-struct Node { 
+struct Node { //Nodo para el arbol binario
+    string ByName;    
     int data;
     Node* left;
     Node* right;
+
+    // Constructor
+    Node(string strValue, int value) : ByName(strValue), data(value), left(nullptr), right(nullptr) {}
 };
 
-Node* createNode(int data) {
-    Node* newNode = new Node;
-    newNode->data = data;
-    newNode->left = NULL;
-    newNode->right = NULL;
-    return newNode;
-};
-Node* deleteNode(Node* root, int key) {
-    if (root == NULL) {
-        return root;
+// Funcion para ingresar un nuevo nodo al arbol binario
+Node* insert(Node* root, string strValue,int value) {
+    // Si el arbol esta vacio, añade un nuevo nodo y lo convierte en raiz
+    if (root == nullptr) {
+        return new Node(strValue, value);
     }
-    if (key < root->data) {
-       root->left = deleteNode(root->left, key);
-    } else if (key > root->data) {
-        root->right = deleteNode(root->right, key);
-    } else {
-        if (root->left == NULL) {
-            Node* temp = root->right;
-            delete root;
-            return temp;
-        } else if (root->right == NULL) {
-            Node* temp = root->left;
-            delete root;
-            return temp;
-        }
 
-        Node* temp = root->right;
-        while (temp->left != NULL) {
-            temp = temp->left;
-        }
-        root->data = temp->data;
-        root->right = deleteNode(root->right, temp->data);
+    // Si no es asi, recorre el arbol.
+    if (value < root->data) {
+        root->left = insert(root->left, strValue,value);
+    } else if (value > root->data) {
+        root->right = insert(root->right, strValue, value);
     }
+
     return root;
 }
+
+void inorderTraversal(Node* root) {
+    if (root != nullptr) {
+        inorderTraversal(root->left);
+        if (root->data >= 90 && root->data < 100) {
+            cout <<  root->ByName  << " " << root->data;
+        }
+        inorderTraversal(root->right);
+    }
+}
+
+template <typename T>
+class TreeNode {
+public:
+    T data;
+    vector<TreeNode*> children;
+
+    // Constructor
+    TreeNode(T value) : data(value) {}
+
+    // Destructor to free allocated memory
+    ~TreeNode() {
+        for (TreeNode* child : children) {
+            delete child;
+        }
+    }
+};
+
+// General Tree class to manage the general tree
+template <typename T>
+class GeneralTree {
+private:
+    TreeNode<T>* root;
+
+public:
+    // Constructor
+    GeneralTree(T rootData) {
+        root = new TreeNode<T>(rootData);
+    }
+
+    // Destructor to free allocated memory
+    ~GeneralTree() {
+        delete root;
+    }
+
+    // Function to add a child to a node
+    void addChild(TreeNode<T>* parent, T childData) {
+        TreeNode<T>* child = new TreeNode<T>(childData);
+        parent->children.push_back(child);
+    }
+
+    // Function to print the tree using depth-first traversal
+    void printTree(TreeNode<T>* node, int depth = 0) {
+        for (int i = 0; i < depth; ++i) {
+            std::cout << "  ";  // Indentation for better visualization
+        }
+        std::cout << node->data << std::endl;
+
+        for (TreeNode<T>* child : node->children) {
+            printTree(child, depth + 1);
+        }
+    }
+
+    // Public function to print the entire general tree
+    void printTree() {
+        printTree(root);
+    }
+};
 
 int main()
 {
@@ -79,7 +131,19 @@ int main()
             break;
         }            
     }
+    fclose(file);
 
+    // Crear un arbol binario vacio
+    Node* root = nullptr;
+
+    // Ingresar PowerLevel y Nombre de los guardianes al arbol binario
+    root = insert(root, nguardian[0].Name, nguardian[0].PowerLevel);
+    for (int i = 1; i < guardcount; i++)
+    {
+        insert(root, nguardian[i].Name,nguardian[i].PowerLevel);
+    }
+
+    
     //Menu y selección sobre que hacer a continuación.
     do
     {
@@ -89,14 +153,7 @@ int main()
         {
             case 1: //Se imprimira en la consola los guardianes que son candidatos(Tienen que tener entre 90 y 99 puntos de poder).
                 cout << "The list of candidates will be shown below:";
-                for (int i = 0; i < guardcount; i++)
-                {
-                    if(nguardian[i].PowerLevel >= 90 && nguardian[i].PowerLevel <= 99)
-                    {
-                        printf("%s %d" ,nguardian[i].Name , nguardian[i].PowerLevel);
-                    }
-                }
-                cout << endl;
+                inorderTraversal(root);
                 system("pause");
                 system("cls");
                 break;
