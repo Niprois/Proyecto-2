@@ -185,6 +185,7 @@ int main()
                 {
                     cout << i << ") " << nguardian[i].Name << "\n";
                 }
+                
                 cin >> guard2;
                 cout << "The guardian " << nguardian[guard1].Name << " will fight against " << nguardian[guard2].Name << endl;
                 randomNumber = rand() % 6 + 1;
