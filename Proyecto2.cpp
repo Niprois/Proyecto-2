@@ -188,7 +188,6 @@ int main()
                 cin >> guard2;
                 cout << "The guardian " << nguardian[guard1].Name << " will fight against " << nguardian[guard2].Name << endl;
                 randomNumber = rand() % 6 + 1;
-                cout << "The number generated is: " << randomNumber;
                 //Dependiendo de quien gane, se le suma o quita puntos.
                 if (randomNumber >= 5 && randomNumber <= 6)
                 { 
